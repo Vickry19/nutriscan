@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Scan from "./pages/Scan";
 import Result from "./pages/Result";
@@ -8,7 +8,6 @@ import History from "./pages/History";
 
 function App() {
   return (
-    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/scan" element={<Scan />} />
@@ -17,7 +16,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/history" element={<History />} />
       </Routes>
-    </BrowserRouter>
+
   );
 }
 
