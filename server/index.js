@@ -66,6 +66,14 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/api", (req, res) => {
+  res.json({
+    success: true,
+    message: "NutriScan API is running",
+    gemini: Boolean(process.env.GEMINI_API_KEY),
+  });
+});
+
 /*
 |--------------------------------------------------------------------------
 | GEMINI ANALYZER
