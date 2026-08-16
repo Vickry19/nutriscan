@@ -9,7 +9,7 @@ ReactDOM.createRoot(
   document.getElementById("root")
 ).render(
   <React.StrictMode>
-    <HashRouter basename="/nutriscan">
+    <HashRouter>
       <App />
     </HashRouter>
   </React.StrictMode>
