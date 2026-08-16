@@ -18,7 +18,21 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://vickry19.github.io",
+    ],
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "OPTIONS",
+    ],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+    ],
   })
 );
 
@@ -1414,40 +1428,51 @@ app.get(
     return "Produk berhasil ditemukan berdasarkan barcode dan data nutrisi yang tersedia.";
   }
 /*
+|/*
 |--------------------------------------------------------------------------
 | START SERVER
 |--------------------------------------------------------------------------
 */
 
-app.listen(
-  PORT,
-  () => {
-    console.log("");
+if (process.env.NODE_ENV !== "production") {
+  app.listen(
+    PORT,
+    () => {
+      console.log("");
 
-    console.log(
-      "================================"
-    );
+      console.log(
+        "================================"
+      );
 
-    console.log(
-      "🚀 NutriScan Server"
-    );
+      console.log(
+        "🚀 NutriScan Server"
+      );
 
-    console.log(
-      `http://localhost:${PORT}`
-    );
+      console.log(
+        `http://localhost:${PORT}`
+      );
 
-    console.log(
-      `Gemini API: ${
-        process.env.GEMINI_API_KEY
-          ? "CONNECTED"
-          : "NOT CONFIGURED"
-      }`
-    );
+      console.log(
+        `Gemini API: ${
+          process.env.GEMINI_API_KEY
+            ? "CONNECTED"
+            : "NOT CONFIGURED"
+        }`
+      );
 
-    console.log(
-      "================================"
-    );
+      console.log(
+        "================================"
+      );
 
-    console.log("");
-  }
-);
+      console.log("");
+    }
+  );
+}
+
+/*
+|--------------------------------------------------------------------------
+| VERCEL
+|--------------------------------------------------------------------------
+*/
+
+export default app;
