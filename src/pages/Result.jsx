@@ -61,45 +61,53 @@ export default function Result() {
     if (!result) {
       return;
     }
-
-    /*
-     * Jika Result dibuka dari History, historyId sudah ada.
-     * Jangan membuat record history baru.
-     */
+  
     const historyId =
       location.state?.historyId;
-
-    if (historyId || historySaveRef.current) {
+  
+    if (
+      historyId ||
+      historySaveRef.current
+    ) {
       return;
     }
-
+  
     historySaveRef.current = true;
-
-    try {
-      const saved = addHistory(
-        result,
-        image
-      );
-
-      if (saved) {
-        console.log(
-          "✅ Hasil analisis disimpan ke history:",
-          saved.id
+  
+    const saveResult = async () => {
+      try {
+        const saved =
+          await addHistory(
+            result,
+            image
+          );
+  
+        if (saved) {
+          console.log(
+            "✅ Hasil analisis disimpan ke history:",
+            saved.id
+          );
+        } else {
+          console.warn(
+            "⚠️ History tidak berhasil disimpan."
+          );
+        }
+  
+      } catch (error) {
+        console.error(
+          "❌ Gagal menyimpan history:",
+          error
         );
       }
-    } catch (error) {
-      console.error(
-        "❌ Gagal menyimpan history:",
-        error
-      );
-    }
+    };
+  
+    saveResult();
+  
   }, [
     result,
     image,
     location.state,
   ]);
-
-
   /*
   |--------------------------------------------------------------------------
   | DATA TIDAK DITEMUKAN

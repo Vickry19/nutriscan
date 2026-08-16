@@ -213,7 +213,7 @@ export default function BarcodeScanner() {
       );
   
       const response = await fetch(
-        `http://localhost:5000/api/barcode/${encodeURIComponent(
+        `https://nutriscan-pi-five.vercel.app/api/barcode/${encodeURIComponent(
           scannedCode
         )}`
       );

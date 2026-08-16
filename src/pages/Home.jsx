@@ -14,99 +14,124 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-
 export default function Home() {
-  const navigate =
-    useNavigate();
-
+  const navigate = useNavigate();
 
   return (
     <main className="min-h-screen bg-[#F7FAF8] text-[#17251C]">
-
 
       {/* =====================================================
           NAVBAR
       ===================================================== */}
 
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
+      <nav className="mx-auto max-w-6xl px-5 py-4 md:py-5">
 
-        {/* LOGO */}
+        <div className="flex items-center justify-between">
 
-        <button
-          onClick={() =>
-            navigate("/")
-          }
-          className="flex items-center gap-2"
-        >
+          {/* LOGO */}
 
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1F8A4C] text-xl">
-            🥗
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2"
+          >
+
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1F8A4C] text-xl">
+              🥗
+            </div>
+
+            <span className="text-xl font-bold tracking-tight">
+              Nutri
+              <span className="text-[#1F8A4C]">
+                Scan
+              </span>
+            </span>
+
+          </button>
+
+
+          {/* DESKTOP MENU */}
+
+          <div className="hidden items-center gap-3 text-sm font-medium md:flex">
+
+            <a
+              href="#cara-kerja"
+              className="px-3 py-2 transition hover:text-[#1F8A4C]"
+            >
+              Cara Kerja
+            </a>
+
+            <a
+              href="#tentang"
+              className="px-3 py-2 transition hover:text-[#1F8A4C]"
+            >
+              Tentang
+            </a>
+
+            <button
+              onClick={() => navigate("/history")}
+              className="flex items-center gap-2 rounded-xl px-3 py-2 transition hover:bg-[#EAF6EE] hover:text-[#1F8A4C]"
+            >
+              <History size={17} />
+              Riwayat
+            </button>
+
+            <button
+              onClick={() => navigate("/profile")}
+              className="flex items-center gap-2 rounded-xl px-3 py-2 transition hover:bg-[#EAF6EE] hover:text-[#1F8A4C]"
+            >
+              <UserRound size={17} />
+              Profile
+            </button>
+
+            <button
+              onClick={() => navigate("/scan")}
+              className="ml-2 flex items-center justify-center gap-2 rounded-2xl bg-[#1F8A4C] px-5 py-3 font-bold text-white shadow-lg shadow-green-900/10 transition hover:-translate-y-0.5 hover:bg-[#176B3A]"
+            >
+              Mulai Scan
+              <ArrowRight size={17} />
+            </button>
+
           </div>
 
-          <span className="text-xl font-bold tracking-tight">
-            Nutri
-            <span className="text-[#1F8A4C]">
-              Scan
-            </span>
-          </span>
-
-        </button>
+        </div>
 
 
-        {/* DESKTOP MENU */}
+        {/* =================================================
+            MOBILE MENU
+        ================================================= */}
 
-        <div className="hidden items-center gap-3 text-sm font-medium md:flex">
+        <div className="mt-4 grid grid-cols-3 gap-2 border-t border-gray-100 pt-3 md:hidden">
 
-          <a
-            href="#cara-kerja"
-            className="px-3 py-2 transition hover:text-[#1F8A4C]"
-          >
-            Cara Kerja
-          </a>
-
-          <a
-            href="#tentang"
-            className="px-3 py-2 transition hover:text-[#1F8A4C]"
-          >
-            Tentang
-          </a>
+          {/* RIWAYAT */}
 
           <button
-            onClick={() =>
-              navigate("/history")
-            }
-            className="flex items-center gap-2 rounded-xl px-3 py-2 transition hover:bg-[#EAF6EE] hover:text-[#1F8A4C]"
+            onClick={() => navigate("/history")}
+            className="flex flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-xs font-semibold text-gray-600 transition hover:bg-[#EAF6EE] hover:text-[#1F8A4C]"
           >
-            <History
-              size={17}
-            />
-
-            Riwayat
+            <History size={20} />
+            <span>Riwayat</span>
           </button>
 
-          <button
-            onClick={() =>
-              navigate("/profile")
-            }
-            className="flex items-center gap-2 rounded-xl px-3 py-2 transition hover:bg-[#EAF6EE] hover:text-[#1F8A4C]"
-          >
-            <UserRound
-              size={17}
-            />
 
-            Profile
+          {/* PROFILE */}
+
+          <button
+            onClick={() => navigate("/profile")}
+            className="flex flex-col items-center justify-center gap-1 rounded-xl bg-[#EAF6EE] px-2 py-2 text-xs font-bold text-[#1F8A4C] transition hover:bg-[#DDF2E5]"
+          >
+            <UserRound size={20} />
+            <span>Profile</span>
           </button>
 
+
+          {/* SCAN */}
+
           <button
-            onClick={() =>
-              navigate("/scan")
-            }
-            className="ml-2 flex items-center justify-center gap-2 rounded-2xl bg-[#1F8A4C] px-5 py-3 font-bold text-white shadow-lg shadow-green-900/10 transition hover:-translate-y-0.5 hover:bg-[#176B3A]"
+            onClick={() => navigate("/scan")}
+            className="flex flex-col items-center justify-center gap-1 rounded-xl bg-[#1F8A4C] px-2 py-2 text-xs font-bold text-white transition hover:bg-[#176B3A]"
           >
-            Mulai Scan
-            <ArrowRight
-              size={17}
-            />
+            <Camera size={20} />
+            <span>Mulai Scan</span>
           </button>
 
         </div>
@@ -120,16 +145,13 @@ export default function Home() {
 
       <section className="mx-auto grid max-w-6xl items-center gap-12 px-5 pb-20 pt-10 md:grid-cols-2 md:pt-16">
 
-
         {/* LEFT */}
 
         <div>
 
           <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#E4F4EA] px-4 py-2 text-sm font-semibold text-[#1F8A4C]">
 
-            <Sparkles
-              size={16}
-            />
+            <Sparkles size={16} />
 
             Smart Nutrition Scanner
 
@@ -162,35 +184,25 @@ export default function Home() {
           <div className="mt-8 grid max-w-lg gap-3 sm:grid-cols-2">
 
             <button
-              onClick={() =>
-                navigate("/scan")
-              }
+              onClick={() => navigate("/scan")}
               className="flex items-center justify-center gap-2 rounded-2xl bg-[#1F8A4C] px-5 py-4 font-bold text-white shadow-lg transition hover:bg-[#176B3A]"
             >
 
-              <Camera
-                size={20}
-              />
+              <Camera size={20} />
 
               Foto Makanan
 
-              <ArrowRight
-                size={18}
-              />
+              <ArrowRight size={18} />
 
             </button>
 
 
             <button
-              onClick={() =>
-                navigate("/barcode")
-              }
+              onClick={() => navigate("/barcode")}
               className="flex items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white px-5 py-4 font-bold text-[#17251C] transition hover:border-[#1F8A4C] hover:text-[#1F8A4C]"
             >
 
-              <ScanBarcode
-                size={20}
-              />
+              <ScanBarcode size={20} />
 
               Scan Barcode
 
@@ -243,9 +255,9 @@ export default function Home() {
         </div>
 
 
-        {/* ===================================================
+        {/* =================================================
             HERO VISUAL
-        =================================================== */}
+        ================================================= */}
 
         <div className="relative mx-auto w-full max-w-md">
 
@@ -257,7 +269,6 @@ export default function Home() {
           <div className="relative overflow-hidden rounded-[2rem] border border-white bg-white p-5 shadow-2xl shadow-green-900/10">
 
             <div className="rounded-3xl bg-gradient-to-br from-[#E5F5EA] to-[#F8FCF9] p-7">
-
 
               {/* FOOD ICON */}
 
@@ -322,9 +333,7 @@ export default function Home() {
 
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#DDF2E5] text-[#1F8A4C]">
 
-                    <Sparkles
-                      size={18}
-                    />
+                    <Sparkles size={18} />
 
                   </div>
 
@@ -361,46 +370,27 @@ export default function Home() {
 
         <div className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-3">
 
-
           <QuickAction
-            icon={
-              <Camera
-                size={23}
-              />
-            }
+            icon={<Camera size={23} />}
             title="Foto Makanan"
             description="Analisis makanan atau masakan dari satu foto."
-            onClick={() =>
-              navigate("/scan")
-            }
+            onClick={() => navigate("/scan")}
           />
 
 
           <QuickAction
-            icon={
-              <ScanBarcode
-                size={23}
-              />
-            }
+            icon={<ScanBarcode size={23} />}
             title="Scan Barcode"
             description="Cari data produk kemasan menggunakan barcode."
-            onClick={() =>
-              navigate("/barcode")
-            }
+            onClick={() => navigate("/barcode")}
           />
 
 
           <QuickAction
-            icon={
-              <History
-                size={23}
-              />
-            }
+            icon={<History size={23} />}
             title="Riwayat Analisis"
             description="Lihat kembali makanan yang pernah dianalisis."
-            onClick={() =>
-              navigate("/history")
-            }
+            onClick={() => navigate("/history")}
           />
 
         </div>
@@ -418,7 +408,6 @@ export default function Home() {
       >
 
         <div className="mx-auto max-w-6xl">
-
 
           <div className="mx-auto max-w-2xl text-center">
 
@@ -441,14 +430,9 @@ export default function Home() {
 
           <div className="mt-12 grid gap-6 md:grid-cols-3">
 
-
             <StepCard
               number="01"
-              icon={
-                <Camera
-                  size={26}
-                />
-              }
+              icon={<Camera size={26} />}
               title="Foto Makanan"
               description="Ambil satu foto makanan, masakan, atau kemasan yang ingin dianalisis."
             />
@@ -456,11 +440,7 @@ export default function Home() {
 
             <StepCard
               number="02"
-              icon={
-                <Sparkles
-                  size={26}
-                />
-              }
+              icon={<Sparkles size={26} />}
               title="AI Menganalisis"
               description="NutriScan menggunakan AI untuk mengenali makanan dan memperkirakan kandungan nutrisinya."
             />
@@ -468,11 +448,7 @@ export default function Home() {
 
             <StepCard
               number="03"
-              icon={
-                <BarChart3
-                  size={26}
-                />
-              }
+              icon={<BarChart3 size={26} />}
               title="Dapatkan Insight"
               description="Lihat kalori, protein, karbohidrat, lemak, gula, serat, natrium, dan insight lainnya."
             />
@@ -492,7 +468,6 @@ export default function Home() {
 
         <div className="mx-auto max-w-6xl">
 
-
           <div className="mx-auto max-w-2xl text-center">
 
             <p className="font-bold text-[#1F8A4C]">
@@ -508,46 +483,29 @@ export default function Home() {
 
           <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
 
-
             <FeatureCard
-              icon={
-                <Utensils
-                  size={22}
-                />
-              }
+              icon={<Utensils size={22} />}
               title="Analisis Makanan"
               description="Kenali makanan dan masakan melalui foto."
             />
 
 
             <FeatureCard
-              icon={
-                <ScanBarcode
-                  size={22}
-                />
-              }
+              icon={<ScanBarcode size={22} />}
               title="Barcode Scanner"
               description="Cari informasi produk kemasan berdasarkan barcode."
             />
 
 
             <FeatureCard
-              icon={
-                <BarChart3
-                  size={22}
-                />
-              }
+              icon={<BarChart3 size={22} />}
               title="Informasi Nutrisi"
               description="Lihat kandungan nutrisi dalam tampilan sederhana."
             />
 
 
             <FeatureCard
-              icon={
-                <History
-                  size={22}
-                />
-              }
+              icon={<History size={22} />}
               title="Riwayat Scan"
               description="Simpan hasil analisis agar mudah dilihat kembali."
             />
@@ -588,17 +546,13 @@ export default function Home() {
 
 
           <button
-            onClick={() =>
-              navigate("/scan")
-            }
+            onClick={() => navigate("/scan")}
             className="mt-7 inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-4 font-bold text-[#1F8A4C] transition hover:bg-green-50"
           >
 
             Mulai dengan NutriScan
 
-            <ArrowRight
-              size={18}
-            />
+            <ArrowRight size={18} />
 
           </button>
 
@@ -630,7 +584,6 @@ export default function Home() {
         </div>
 
       </footer>
-
 
     </main>
   );

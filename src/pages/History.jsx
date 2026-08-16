@@ -1,530 +1,663 @@
 import {
-    ArrowLeft,
-    Clock3,
-    Flame,
-    Trash2,
-  } from "lucide-react";
-  
-  import {
-    useEffect,
-    useState,
-  } from "react";
-  
-  import {
-    useNavigate,
-  } from "react-router-dom";
-  
-  import {
-    clearHistory,
-    deleteHistory,
-    getHistory,
-  } from "../services/historyService";
-  
-  
+  ArrowLeft,
+  Clock3,
+  Trash2,
+  History as HistoryIcon,
+  AlertTriangle,
+  X,
+} from "lucide-react";
+
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+export default function History() {
+  const navigate = useNavigate();
+
+  const [history, setHistory] = useState([]);
+
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
+  const [showDeleteAll, setShowDeleteAll] = useState(false);
+
   /*
   |--------------------------------------------------------------------------
-  | HISTORY PAGE
+  | LOAD HISTORY
   |--------------------------------------------------------------------------
   */
-  
-  export default function History() {
-    const navigate =
-      useNavigate();
-  
-    const [history, setHistory] =
-      useState([]);
-  
-  
-    /*
-    |--------------------------------------------------------------------------
-    | LOAD HISTORY
-    |--------------------------------------------------------------------------
-    */
-  
-    useEffect(() => {
-      loadHistory();
-    }, []);
-  
-  
-    function loadHistory() {
-      const data =
-        getHistory();
-  
-      setHistory(
-        Array.isArray(data)
-          ? data
-          : []
-      );
-    }
-  
-  
-    /*
-    |--------------------------------------------------------------------------
-    | DELETE ITEM
-    |--------------------------------------------------------------------------
-    */
-  
-    function handleDelete(id) {
-      const updated =
-        deleteHistory(id);
-  
-      setHistory(
-        Array.isArray(updated)
-          ? updated
-          : []
-      );
-    }
-  
-  
-    /*
-    |--------------------------------------------------------------------------
-    | DELETE ALL
-    |--------------------------------------------------------------------------
-    */
-  
-    function handleClear() {
-      if (
-        history.length === 0
-      ) {
-        return;
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("nutriscan_history");
+
+      if (saved) {
+        const parsed = JSON.parse(saved);
+
+        if (Array.isArray(parsed)) {
+          setHistory(parsed);
+        }
       }
-  
-      const confirmed =
-        window.confirm(
-          "Apakah kamu yakin ingin menghapus semua riwayat analisis?"
-        );
-  
-      if (!confirmed) {
-        return;
-      }
-  
-      clearHistory();
-  
+    } catch (error) {
+      console.error("Gagal membaca history:", error);
+
       setHistory([]);
     }
-  
-  
-    /*
-    |--------------------------------------------------------------------------
-    | OPEN RESULT
-    |--------------------------------------------------------------------------
-    */
-  
-    function openResult(item) {
-      if (!item?.result) {
-        return;
-      }
-  
-      navigate(
-        "/result",
-        {
-          state: {
-            result:
-              item.result,
-  
-            image:
-              item.image ||
-              null,
-  
-            /*
-             * Penting:
-             * Result.jsx menggunakan
-             * historyId untuk mengetahui
-             * bahwa hasil berasal dari history.
-             */
-  
-            historyId:
-              item.id,
-          },
-        }
-      );
-    }
-  
-  
-    return (
-      <main className="min-h-screen bg-[#F5F8F6] text-[#17251C]">
-  
-        {/* HEADER */}
-  
-        <header className="sticky top-0 z-30 border-b border-gray-100 bg-white/95 backdrop-blur">
-  
-          <div className="mx-auto flex max-w-3xl items-center px-4 py-4">
-  
-            <button
-              onClick={() =>
-                navigate(-1)
-              }
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white transition hover:bg-gray-50"
-            >
-              <ArrowLeft
-                size={20}
-              />
-            </button>
-  
-  
-            <div className="ml-4 min-w-0">
-  
-              <h1 className="font-black">
-                Riwayat Analisis
-              </h1>
-  
-              <p className="text-xs text-gray-500">
-                Produk dan makanan yang
-                pernah dianalisis
-              </p>
-  
-            </div>
-  
-  
-            {history.length > 0 && (
-              <button
-                onClick={
-                  handleClear
-                }
-                className="ml-auto flex shrink-0 items-center gap-1 rounded-xl px-3 py-2 text-xs font-bold text-red-500 transition hover:bg-red-50"
-              >
-                <Trash2
-                  size={14}
-                />
-  
-                <span className="hidden sm:inline">
-                  Hapus Semua
-                </span>
-              </button>
-            )}
-  
-          </div>
-  
-        </header>
-  
-  
-        {/* CONTENT */}
-  
-        <section className="mx-auto max-w-3xl px-4 py-6 sm:px-5">
-  
-  
-          {/* EMPTY STATE */}
-  
-          {history.length === 0 && (
-            <div className="rounded-[2rem] border border-gray-100 bg-white p-8 text-center shadow-sm">
-  
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#EAF6EE] text-[#439B62]">
-  
-                <Clock3
-                  size={30}
-                />
-  
-              </div>
-  
-  
-              <h2 className="mt-5 text-xl font-black">
-                Belum Ada Riwayat
-              </h2>
-  
-  
-              <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500">
-                Hasil analisis makanan
-                dan produk yang kamu
-                scan akan muncul di
-                halaman ini.
-              </p>
-  
-  
-              <button
-                onClick={() =>
-                  navigate("/scan")
-                }
-                className="mt-6 rounded-2xl bg-[#439B62] px-6 py-3 font-black text-white transition hover:bg-[#358250]"
-              >
-                Mulai Analisis
-              </button>
-  
-            </div>
-          )}
-  
-  
-          {/* HISTORY LIST */}
-  
-          {history.length > 0 && (
-            <div className="space-y-4">
-  
-              {history.map(
-                (item) => (
-                  <HistoryCard
-                    key={item.id}
-                    item={item}
-                    onOpen={() =>
-                      openResult(
-                        item
-                      )
-                    }
-                    onDelete={() =>
-                      handleDelete(
-                        item.id
-                      )
-                    }
-                  />
-                )
-              )}
-  
-            </div>
-          )}
-  
-        </section>
-  
-      </main>
-    );
-  }
-  
-  
+  }, []);
+
   /*
   |--------------------------------------------------------------------------
-  | HISTORY CARD
+  | DELETE ONE
   |--------------------------------------------------------------------------
   */
-  
-  function HistoryCard({
-    item,
-    onOpen,
-    onDelete,
-  }) {
-    const productName =
-      item?.productName ||
-      "Produk tidak diketahui";
-  
-    const brand =
-      item?.brand ||
-      "";
-  
-    const calories =
-      item?.calories;
-  
-    const image =
-      item?.image ||
-      null;
-  
-    const isBarcode =
-      item?.analysisType ===
-      "packaged_product";
-  
-    const isEstimated =
-      item?.nutritionSource ===
-      "estimated";
-  
-  
-    const date = item?.createdAt
-      ? new Date(
-          item.createdAt
-        )
-      : null;
-  
-  
-    return (
-      <article className="rounded-[2rem] border border-gray-100 bg-white p-4 shadow-sm transition hover:shadow-md">
-  
-  
-        {/* MAIN */}
-  
-        <button
-          onClick={onOpen}
-          className="flex w-full gap-4 text-left"
-        >
-  
-          {/* IMAGE */}
-  
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#EAF4ED]">
-  
-            {image ? (
-              <img
-                src={image}
-                alt={productName}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <span className="text-3xl">
-                🍽️
-              </span>
-            )}
-  
-          </div>
-  
-  
-          {/* INFORMATION */}
-  
-          <div className="min-w-0 flex-1">
-  
-            <p className="text-[10px] font-black uppercase tracking-wider text-[#439B62]">
-              {brand ||
-                (isBarcode
-                  ? "Produk Kemasan"
-                  : "Makanan")}
-            </p>
-  
-  
-            <h2 className="mt-1 line-clamp-2 text-base font-black leading-5 text-[#17233A]">
-              {productName}
-            </h2>
-  
-  
-            {date && (
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-400">
-  
-                <Clock3
-                  size={13}
-                />
-  
-                {formatDate(
-                  date
-                )}
-  
-              </div>
-            )}
-  
-          </div>
-  
-  
-          {/* CALORIES */}
-  
-          <div className="hidden shrink-0 text-right sm:block">
-  
-            <div className="flex items-center justify-end gap-1 text-[#F07B35]">
-  
-              <Flame
-                size={15}
-              />
-  
-              <span className="text-sm font-black">
-                {formatValue(
-                  calories
-                )}
-              </span>
-  
-            </div>
-  
-  
-            <p className="mt-1 text-[10px] text-gray-400">
-              kcal
-            </p>
-  
-          </div>
-  
-        </button>
-  
-  
-        {/* FOOTER */}
-  
-        <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
-  
-  
-          {/* BADGES */}
-  
-          <div className="flex flex-wrap gap-2">
-  
-            {isBarcode && (
-              <span className="rounded-full bg-[#EAF0FF] px-3 py-1 text-[10px] font-bold text-[#4169B5]">
-                Barcode
-              </span>
-            )}
-  
-  
-            {isEstimated && (
-              <span className="rounded-full bg-[#FFF7E5] px-3 py-1 text-[10px] font-bold text-[#A67500]">
-                Estimasi AI
-              </span>
-            )}
-  
-  
-            {!isBarcode &&
-              !isEstimated && (
-                <span className="rounded-full bg-[#EAF6EE] px-3 py-1 text-[10px] font-bold text-[#2E8150]">
-                  Analisis
-                </span>
-              )}
-  
-          </div>
-  
-  
-          {/* DELETE */}
-  
-          <button
-            onClick={(event) => {
-              event.stopPropagation();
-  
-              onDelete();
-            }}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-red-400 transition hover:bg-red-50"
-          >
-  
-            <Trash2
-              size={14}
-            />
-  
-            Hapus
-  
-          </button>
-  
-        </div>
-  
-      </article>
+
+  const confirmDelete = () => {
+    if (!deleteTarget) {
+      return;
+    }
+
+    const updated = history.filter(
+      (item) => item.id !== deleteTarget.id
     );
-  }
-  
-  
+
+    setHistory(updated);
+
+    localStorage.setItem(
+      "nutriscan_history",
+      JSON.stringify(updated)
+    );
+
+    setDeleteTarget(null);
+  };
+
   /*
   |--------------------------------------------------------------------------
-  | HELPERS
+  | DELETE ALL
   |--------------------------------------------------------------------------
   */
-  
-  function formatValue(
-    value
-  ) {
-    if (
-      value === null ||
-      value === undefined ||
-      value === ""
-    ) {
-      return "--";
+
+  const confirmDeleteAll = () => {
+    setHistory([]);
+
+    localStorage.removeItem("nutriscan_history");
+
+    setShowDeleteAll(false);
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | FORMAT DATE
+  |--------------------------------------------------------------------------
+  */
+
+  const formatDate = (date) => {
+    if (!date) {
+      return "-";
     }
-  
-    const number =
-      Number(value);
-  
-    if (
-      !Number.isFinite(number)
-    ) {
-      return "--";
-    }
-  
-    return new Intl.NumberFormat(
-      "id-ID",
-      {
-        maximumFractionDigits: 1,
-      }
-    ).format(number);
-  }
-  
-  
-  function formatDate(
-    date
-  ) {
-    if (
-      !(date instanceof Date) ||
-      Number.isNaN(
-        date.getTime()
-      )
-    ) {
-      return "--";
-    }
-  
-    return new Intl.DateTimeFormat(
-      "id-ID",
-      {
+
+    try {
+      return new Intl.DateTimeFormat("id-ID", {
         day: "2-digit",
         month: "short",
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      }
-    ).format(date);
+      }).format(new Date(date));
+    } catch {
+      return "-";
+    }
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | GET IMAGE
+  |--------------------------------------------------------------------------
+  */
+
+  const getImage = (item) => {
+    if (
+      item?.image &&
+      typeof item.image === "string"
+    ) {
+      return item.image;
+    }
+
+    return null;
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | GET ANALYSIS METHOD
+  |--------------------------------------------------------------------------
+  */
+
+  const getAnalysisMethod = (item) => {
+    const analysisType =
+      item?.analysisType ||
+      item?.result?.analysis_type ||
+      "";
+
+    const barcode =
+      item?.barcode ||
+      item?.result?.barcode ||
+      null;
+
+    /*
+     * Jika mempunyai barcode,
+     * berarti analisis dilakukan melalui barcode.
+     */
+
+    if (
+      barcode ||
+      analysisType === "barcode" ||
+      analysisType === "packaged_product"
+    ) {
+      return "Scan Barcode";
+    }
+
+    /*
+     * Jika meal berarti foto makanan.
+     */
+
+    if (analysisType === "meal") {
+      return "Foto Makanan";
+    }
+
+    /*
+     * Default untuk analisis gambar kemasan.
+     */
+
+    return "Foto Kemasan";
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | GET DATA SOURCE
+  |--------------------------------------------------------------------------
+  */
+
+  const getDataSource = (item) => {
+    const nutritionSource =
+      item?.nutritionSource ||
+      item?.result?.nutrition_source ||
+      "";
+
+    /*
+     * Data dari database / barcode
+     */
+
+    if (
+      nutritionSource === "label" ||
+      nutritionSource === "database" ||
+      nutritionSource === "product"
+    ) {
+      return "Data Produk";
+    }
+
+    /*
+     * Estimasi AI
+     */
+
+    if (nutritionSource === "estimated") {
+      return "Estimasi AI";
+    }
+
+    /*
+     * Analisis gambar oleh AI
+     */
+
+    if (
+      nutritionSource === "vision" ||
+      nutritionSource === "ai"
+    ) {
+      return "AI Vision";
+    }
+
+    /*
+     * Fallback berdasarkan tipe analisis
+     */
+
+    const analysisType =
+      item?.analysisType ||
+      item?.result?.analysis_type ||
+      "";
+
+    if (
+      analysisType === "meal"
+    ) {
+      return "Estimasi AI";
+    }
+
+    if (
+      analysisType === "packaged_product"
+    ) {
+      return "AI Vision";
+    }
+
+    return "AI Vision";
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | OPEN RESULT
+  |--------------------------------------------------------------------------
+  */
+
+  const openHistory = (item) => {
+    navigate("/result", {
+      state: {
+        result: item.result,
+
+        image: item.image || null,
+
+        fromHistory: true,
+      },
+    });
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | EMPTY
+  |--------------------------------------------------------------------------
+  */
+
+  if (history.length === 0) {
+    return (
+      <main className="min-h-screen bg-[#F7FAF8] text-[#17251C]">
+
+        <header className="border-b border-gray-100 bg-white">
+
+          <div className="mx-auto flex max-w-3xl items-center gap-4 px-5 py-5">
+
+            <button
+              onClick={() => navigate("/")}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 transition hover:border-[#1F8A4C] hover:text-[#1F8A4C]"
+            >
+              <ArrowLeft size={21} />
+            </button>
+
+            <div>
+
+              <h1 className="text-xl font-extrabold">
+                Riwayat Analisis
+              </h1>
+
+              <p className="text-sm text-gray-500">
+                Produk dan makanan
+                yang pernah dianalisis
+              </p>
+
+            </div>
+
+          </div>
+
+        </header>
+
+        <section className="mx-auto max-w-3xl px-5 py-20">
+
+          <div className="rounded-3xl border border-gray-100 bg-white p-10 text-center shadow-sm">
+
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#DDF2E5] text-[#1F8A4C]">
+
+              <HistoryIcon size={30} />
+
+            </div>
+
+            <h2 className="mt-5 text-xl font-extrabold">
+              Belum ada riwayat
+            </h2>
+
+            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500">
+              Produk yang sudah kamu
+              analisis akan muncul di
+              halaman ini.
+            </p>
+
+            <button
+              onClick={() => navigate("/scan")}
+              className="mt-6 rounded-2xl bg-[#1F8A4C] px-6 py-3 font-bold text-white transition hover:bg-[#176B3A]"
+            >
+              Mulai Analisis
+            </button>
+
+          </div>
+
+        </section>
+
+      </main>
+    );
   }
+
+  /*
+  |--------------------------------------------------------------------------
+  | HISTORY PAGE
+  |--------------------------------------------------------------------------
+  */
+
+  return (
+    <main className="min-h-screen bg-[#F7FAF8] text-[#17251C]">
+
+      {/* HEADER */}
+
+      <header className="border-b border-gray-100 bg-white">
+
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-5 py-5">
+
+          <div className="flex items-center gap-4">
+
+            <button
+              onClick={() => navigate("/")}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gray-200 transition hover:border-[#1F8A4C] hover:text-[#1F8A4C]"
+            >
+              <ArrowLeft size={21} />
+            </button>
+
+            <div>
+
+              <h1 className="text-xl font-extrabold">
+                Riwayat Analisis
+              </h1>
+
+              <p className="text-sm text-gray-500">
+                Produk dan makanan yang
+                pernah dianalisis
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* DELETE ALL */}
+
+          <button
+            onClick={() => setShowDeleteAll(true)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-red-500 transition hover:bg-red-50"
+            title="Hapus semua riwayat"
+          >
+            <Trash2 size={21} />
+          </button>
+
+        </div>
+
+      </header>
+
+      {/* CONTENT */}
+
+      <section className="mx-auto max-w-3xl px-5 py-7">
+
+        <div className="mb-5 flex items-center justify-between">
+
+          <p className="text-sm font-semibold text-gray-500">
+            {history.length} analisis
+          </p>
+
+          <span className="rounded-full bg-[#EAF6EE] px-3 py-1 text-xs font-bold text-[#1F8A4C]">
+            Tersimpan di perangkat
+          </span>
+
+        </div>
+
+        <div className="space-y-5">
+
+          {history.map((item) => {
+
+            const image =
+              getImage(item);
+
+            const productName =
+              item.productName ||
+              item.result?.product_name ||
+              item.result?.name ||
+              "Produk";
+
+            const brand =
+              item.brand ||
+              item.result?.brand ||
+              "";
+
+            const analysisMethod =
+              getAnalysisMethod(item);
+
+            const dataSource =
+              getDataSource(item);
+
+            return (
+
+              <article
+                key={item.id}
+                className="overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-sm"
+              >
+
+                {/* =================================================
+                    PRODUCT
+                ================================================= */}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    openHistory(item)
+                  }
+                  className="flex w-full gap-4 p-5 text-left transition hover:bg-gray-50"
+                >
+
+                  {/* IMAGE */}
+
+                  <div className="h-28 w-28 shrink-0 overflow-hidden rounded-2xl bg-[#EAF6EE]">
+
+                    {image ? (
+
+                      <img
+                        src={image}
+                        alt={productName}
+                        className="h-full w-full object-cover"
+                        onError={(event) => {
+                          event.currentTarget.style.display =
+                            "none";
+                        }}
+                      />
+
+                    ) : (
+
+                      <div className="flex h-full items-center justify-center text-3xl">
+                        🥗
+                      </div>
+
+                    )}
+
+                  </div>
+
+                  {/* INFO */}
+
+                  <div className="min-w-0 flex-1">
+
+                    <p className="font-bold text-[#1F8A4C]">
+                      {brand || "NutriScan"}
+                    </p>
+
+                    <h2 className="mt-1 line-clamp-2 text-lg font-extrabold">
+                      {productName}
+                    </h2>
+
+                    <div className="mt-3 flex items-center gap-2 text-sm text-gray-400">
+
+                      <Clock3 size={17} />
+
+                      {formatDate(
+                        item.createdAt
+                      )}
+
+                    </div>
+
+                  </div>
+
+                </button>
+
+                {/* =================================================
+                    FOOTER
+                ================================================= */}
+
+                <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 px-5 py-4">
+
+                  {/* BADGES */}
+
+                  <div className="flex flex-wrap gap-2">
+
+                    {/* METODE ANALISIS */}
+
+                    <span className="rounded-full bg-blue-50 px-4 py-2 text-xs font-bold text-blue-700">
+                      {analysisMethod}
+                    </span>
+
+                    {/* SUMBER DATA */}
+
+                    <span className="rounded-full bg-amber-50 px-4 py-2 text-xs font-bold text-amber-700">
+                      {dataSource}
+                    </span>
+
+                  </div>
+
+                  {/* DELETE */}
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDeleteTarget(item)
+                    }
+                    className="flex items-center gap-2 rounded-xl px-3 py-2 font-semibold text-red-500 transition hover:bg-red-50"
+                  >
+
+                    <Trash2 size={18} />
+
+                    Hapus
+
+                  </button>
+
+                </div>
+
+              </article>
+
+            );
+
+          })}
+
+        </div>
+
+      </section>
+
+      {/* =====================================================
+          DELETE CONFIRMATION
+      ===================================================== */}
+
+      {deleteTarget && (
+
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-5 backdrop-blur-sm">
+
+          <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
+
+            <div className="flex items-start justify-between">
+
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+
+                <AlertTriangle size={24} />
+
+              </div>
+
+              <button
+                onClick={() =>
+                  setDeleteTarget(null)
+                }
+                className="rounded-lg p-2 text-gray-400 hover:bg-gray-100"
+              >
+                <X size={20} />
+              </button>
+
+            </div>
+
+            <h2 className="mt-5 text-xl font-extrabold">
+              Hapus riwayat?
+            </h2>
+
+            <p className="mt-2 text-sm leading-6 text-gray-500">
+              Riwayat analisis ini akan
+              dihapus dari perangkat kamu.
+            </p>
+
+            <div className="mt-6 flex gap-3">
+
+              <button
+                onClick={() =>
+                  setDeleteTarget(null)
+                }
+                className="flex-1 rounded-2xl border border-gray-200 px-4 py-3 font-bold"
+              >
+                Batal
+              </button>
+
+              <button
+                onClick={confirmDelete}
+                className="flex-1 rounded-2xl bg-red-500 px-4 py-3 font-bold text-white hover:bg-red-600"
+              >
+                Hapus
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
+
+      {/* =====================================================
+          DELETE ALL
+      ===================================================== */}
+
+      {showDeleteAll && (
+
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-5 backdrop-blur-sm">
+
+          <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
+
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+
+              <Trash2 size={24} />
+
+            </div>
+
+            <h2 className="mt-5 text-xl font-extrabold">
+              Hapus semua riwayat?
+            </h2>
+
+            <p className="mt-2 text-sm leading-6 text-gray-500">
+              Semua riwayat analisis
+              yang tersimpan di perangkat
+              akan dihapus.
+            </p>
+
+            <div className="mt-6 flex gap-3">
+
+              <button
+                onClick={() =>
+                  setShowDeleteAll(false)
+                }
+                className="flex-1 rounded-2xl border border-gray-200 px-4 py-3 font-bold"
+              >
+                Batal
+              </button>
+
+              <button
+                onClick={confirmDeleteAll}
+                className="flex-1 rounded-2xl bg-red-500 px-4 py-3 font-bold text-white hover:bg-red-600"
+              >
+                Hapus Semua
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
+
+    </main>
+  );
+}

@@ -1,5 +1,5 @@
 const API_URL =
-  "http://localhost:5000/api/analyze";
+  "https://nutriscan-pi-five.vercel.app/api/analyze";
 
 export async function analyzeNutrition(
   imageFile
